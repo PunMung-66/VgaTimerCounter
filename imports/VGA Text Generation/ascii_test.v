@@ -4,7 +4,8 @@ module ascii_test (
     input clk,
     input video_on,
     input [9:0] x, y,
-    output reg [11:0] rgb
+    output reg [11:0] rgb,
+    input [255:0] data_raw
 );
 
     // Parameters
@@ -40,8 +41,8 @@ module ascii_test (
     wire [48:0] sum_p;          // "SUM_P"
     wire [48:0] sum_e;          // "SUM_E"
     wire [48:0] period;         // "PERIOD:"
-    reg [255:0] data_raw;
     reg [15:0] data_in [24:0]; // 16-bit data input
+    reg [255:0] data_raw_reg;
     wire [48:0] data_out [24:0]; // 49-bit ASCII output
 
 
@@ -60,22 +61,21 @@ module ascii_test (
     integer col_pos[6:0];
     integer i, j, row;
 
-    initial begin
+    always @* begin
         // Calculate column positions
+        data_raw_reg = data_raw;
         col_pos[0] = COL_START;
         for (i = 1; i <= 6; i = i + 1) begin
             // col_pos[i] = col_pos[i - 1] + (CHAR_SIZE * (i == 1 ? 7 : 4));
             col_pos[i] = col_pos[i - 1] + (CHAR_SIZE * 7);
         end
 
-        data_raw = {16'd0000, 16'd0001, 16'd0002, 16'd0003, 16'd0004, 16'd0005, 16'd0006, 16'd0007, 16'd0008, 16'd0009, 16'd0010, 16'd0011, 16'd0012, 16'd0013, 16'd0014, 16'd0015};
-
         for (i = 16; i < 25; i = i + 1) begin
             data_in[i] = 16'd0;
         end
 
         for (i = 0; i < 16; i = i + 1) begin
-            data_in[i] = data_raw[255 - (i * 16) -: 16];
+            data_in[i] = data_raw_reg[255 - (i * 16) -: 16];
             
             if (i <= 3)
                 data_in[20] = data_in[20] + data_in[i];
