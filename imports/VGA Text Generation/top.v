@@ -64,157 +64,32 @@ module top(
     end
 
     // Update data_raw_reg when btnR is pressed
-    integer i;
+    integer i, j, segment_idx;
     always @(posedge clk or posedge reset) begin
         if (reset) begin
-            data_raw_reg <= {16'd0000, 16'd0000, 16'd0000, 16'd0000, 16'd0000, 16'd0000, 16'd0000, 16'd0000, 
-                             16'd0000, 16'd0000, 16'd0000, 16'd0000, 16'd0000, 16'd0000, 16'd0000, 16'd0000};
+            data_raw_reg <= 256'd0; // Clear all 16-bit segments
         end else if (btnR_pressed) begin
-            if (sw[0] == 1 && sw[4] == 1) begin
-                data_raw_reg[255:240] = data_raw_reg[255:240] + 1;
+            for (i = 0; i < 4; i = i + 1) begin
+                for (j = 4; j < 8; j = j + 1) begin
+                    if (sw[i] && sw[j]) begin
+                        // Compute the starting bit of the 16-bit segment
+                        segment_idx = 255 - (4 * i + (j - 4)) * 16;
+                        // Increment the 16-bit segment
+                        data_raw_reg[segment_idx -: 16] <= data_raw_reg[segment_idx -: 16] + 1;
+                    end
+                end
             end
-
-            if (sw[0] == 1 && sw[5] == 1) begin
-                data_raw_reg[239:224] = data_raw_reg[239:224] + 1;
-            end
-
-            if (sw[0] == 1 && sw[6] == 1) begin
-                data_raw_reg[223:208] = data_raw_reg[223:208] + 1;
-            end
-
-            if (sw[0] == 1 && sw[7] == 1) begin
-                data_raw_reg[207:192] = data_raw_reg[207:192] + 1;
-            end
-
-            if (sw[1] == 1 && sw[4] == 1) begin
-                data_raw_reg[191:176] = data_raw_reg[191:176] + 1;
-            end
-
-            if (sw[1] == 1 && sw[5] == 1) begin
-                data_raw_reg[175:160] = data_raw_reg[175:160] + 1;
-            end
-
-            if (sw[1] == 1 && sw[6] == 1) begin
-                data_raw_reg[159:144] = data_raw_reg[159:144] + 1;
-            end
-
-            if (sw[1] == 1 && sw[7] == 1) begin
-                data_raw_reg[143:128] = data_raw_reg[143:128] + 1;
-            end
-
-            if (sw[2] == 1 && sw[4] == 1) begin
-                data_raw_reg[127:112] = data_raw_reg[127:112] + 1;
-            end
-
-            if (sw[2] == 1 && sw[5] == 1) begin
-                data_raw_reg[111:96] = data_raw_reg[111:96] + 1;
-            end
-
-            if (sw[2] == 1 && sw[6] == 1) begin
-                data_raw_reg[95:80] = data_raw_reg[95:80] + 1;
-            end
-
-            if (sw[2] == 1 && sw[7] == 1) begin
-                data_raw_reg[79:64] = data_raw_reg[79:64] + 1;
-            end
-
-            if (sw[3] == 1 && sw[4] == 1) begin
-                data_raw_reg[63:48] = data_raw_reg[63:48] + 1;
-            end
-
-            if (sw[3] == 1 && sw[5] == 1) begin
-                data_raw_reg[47:32] = data_raw_reg[47:32] + 1;
-            end
-
-            if (sw[3] == 1 && sw[6] == 1) begin
-                data_raw_reg[31:16] = data_raw_reg[31:16] + 1;
-            end
-
-            if (sw[3] == 1 && sw[7] == 1) begin
-                data_raw_reg[15:0] = data_raw_reg[15:0] + 1;
-            end
-
-        end
-        else if (btnL_pressed) begin
-            if (sw[0] == 1 && sw[4] == 1) begin
-                if (data_raw_reg[255:240] == 0) data_raw_reg[255:240] = 16'd0000;
-                else data_raw_reg[255:240] = data_raw_reg[255:240] - 1;
-
-            end
-
-            if (sw[0] == 1 && sw[5] == 1) begin
-                if (data_raw_reg[239:224] == 0) data_raw_reg[239:224] = 16'd0000;
-                else data_raw_reg[239:224] = data_raw_reg[239:224] - 1;
-            end
-
-            if (sw[0] == 1 && sw[6] == 1) begin
-                if (data_raw_reg[223:208] == 0) data_raw_reg[223:208] = 16'd0000;
-                else data_raw_reg[223:208] = data_raw_reg[223:208] - 1;
-            end
-
-            if (sw[0] == 1 && sw[7] == 1) begin
-                if (data_raw_reg[207:192] == 0) data_raw_reg[207:192] = 16'd0000;
-                else data_raw_reg[207:192] = data_raw_reg[207:192] - 1;
-            end
-
-            if (sw[1] == 1 && sw[4] == 1) begin
-                if (data_raw_reg[191:176] == 0) data_raw_reg[191:176] = 16'd0000;
-                else data_raw_reg[191:176] = data_raw_reg[191:176] - 1;
-            end
-
-            if (sw[1] == 1 && sw[5] == 1) begin
-                if (data_raw_reg[175:160] == 0) data_raw_reg[175:160] = 16'd0000;
-                else data_raw_reg[175:160] = data_raw_reg[175:160] - 1;
-            end
-
-            if (sw[1] == 1 && sw[6] == 1) begin
-                if (data_raw_reg[159:144] == 0) data_raw_reg[159:144] = 16'd0000;
-                else data_raw_reg[159:144] = data_raw_reg[159:144] - 1;
-            end
-
-            if (sw[1] == 1 && sw[7] == 1) begin
-                if (data_raw_reg[143:128] == 0) data_raw_reg[143:128] = 16'd0000;
-                else data_raw_reg[143:128] = data_raw_reg[143:128] - 1;
-            end
-
-            if (sw[2] == 1 && sw[4] == 1) begin
-                if (data_raw_reg[127:112] == 0) data_raw_reg[127:112] = 16'd0000;
-                else data_raw_reg[127:112] = data_raw_reg[127:112] - 1;
-            end
-
-            if (sw[2] == 1 && sw[5] == 1) begin
-                if (data_raw_reg[111:96] == 0) data_raw_reg[111:96] = 16'd0000;
-                else data_raw_reg[111:96] = data_raw_reg[111:96] - 1;
-            end
-
-            if (sw[2] == 1 && sw[6] == 1) begin
-                if (data_raw_reg[95:80] == 0) data_raw_reg[95:80] = 16'd0000;
-                else data_raw_reg[95:80] = data_raw_reg[95:80] - 1;
-            end
-
-            if (sw[2] == 1 && sw[7] == 1) begin
-                if (data_raw_reg[79:64] == 0) data_raw_reg[79:64] = 16'd0000;
-                else data_raw_reg[79:64] = data_raw_reg[79:64] - 1;
-            end
-
-            if (sw[3] == 1 && sw[4] == 1) begin
-                if (data_raw_reg[63:48] == 0) data_raw_reg[63:48] = 16'd0000;
-                else data_raw_reg[63:48] = data_raw_reg[63:48] - 1;
-            end
-
-            if (sw[3] == 1 && sw[5] == 1) begin
-                if (data_raw_reg[47:32] == 0) data_raw_reg[47:32] = 16'd0000;
-                else data_raw_reg[47:32] = data_raw_reg[47:32] - 1;
-            end
-
-            if (sw[3] == 1 && sw[6] == 1) begin
-                if (data_raw_reg[31:16] == 0) data_raw_reg[31:16] = 16'd0000;
-                else data_raw_reg[31:16] = data_raw_reg[31:16] - 1;
-            end
-
-            if (sw[3] == 1 && sw[7] == 1) begin
-                if (data_raw_reg[15:0] == 0) data_raw_reg[15:0] = 16'd0000;
-                else data_raw_reg[15:0] = data_raw_reg[15:0] - 1;
+        end else if (btnL_pressed) begin
+            for (i = 0; i < 4; i = i + 1) begin
+                for (j = 4; j < 8; j = j + 1) begin
+                    if (sw[i] && sw[j]) begin
+                        // Compute the starting bit of the 16-bit segment
+                        segment_idx = 255 - (4 * i + (j - 4)) * 16;
+                        // Decrement the 16-bit segment, ensuring no underflow
+                        if (data_raw_reg[segment_idx -: 16] > 0)
+                            data_raw_reg[segment_idx -: 16] <= data_raw_reg[segment_idx -: 16] - 1;
+                    end
+                end
             end
         end
     end
