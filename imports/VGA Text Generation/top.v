@@ -8,6 +8,9 @@ module top(
     input btnR,         // T17: Increase 1 minute button
     input btnU,         // T18: Reset button
     input [7:0] sw,  // Switch inputs
+    input mode,         // Mode switch input
+    output [3:0] an,         // Anodes for 7-segment displays
+    output [6:0] seg,         // Cathodes for segments (a to g)
     output hsync,       // to VGA connector
     output vsync,       // to VGA connector
     output [11:0] rgb   // to DAC, to VGA connector
@@ -47,7 +50,15 @@ module top(
     reg btnR_state, btnR_pressed;
     reg btnL_state, btnL_pressed;
 
-    always @(posedge clk or posedge reset) begin
+    always @(posedge clk or posedge reset or negedge mode) begin
+
+        if (mode == 0) begin
+            btnR_state <= 0;
+            btnR_pressed <= 0;
+
+            btnL_state <= 0;
+            btnL_pressed <= 0;
+        end else begin
         if (reset) begin
             btnR_state <= 0;
             btnR_pressed <= 0;
@@ -61,36 +72,37 @@ module top(
             btnL_pressed <= btnL_debounced && !btnL_state; // Detect rising edge
             btnL_state <= btnL_debounced; // Update state
         end
+        end
     end
 
     // Update data_raw_reg when btnR is pressed
     integer i, j, segment_idx;
     always @(posedge clk or posedge reset) begin
-        if (reset) begin
-            data_raw_reg <= 256'd0; // Clear all 16-bit segments
-        end else if (btnR_pressed) begin
-            for (i = 0; i < 4; i = i + 1) begin
-                for (j = 4; j < 8; j = j + 1) begin
-                    if (sw[i] && sw[j]) begin
-                        // Compute the starting bit of the 16-bit segment
-                        segment_idx = 255 - (4 * i + (j - 4)) * 16;
-                        // Increment the 16-bit segment
-                        data_raw_reg[segment_idx -: 16] <= data_raw_reg[segment_idx -: 16] + 1;
+            if (reset) begin
+                data_raw_reg <= 256'd0; // Clear all 16-bit segments
+            end else if (btnR_pressed) begin
+                for (i = 0; i < 4; i = i + 1) begin
+                    for (j = 4; j < 8; j = j + 1) begin
+                        if (sw[i] && sw[j]) begin
+                            // Compute the starting bit of the 16-bit segment
+                            segment_idx = 255 - (4 * i + (j - 4)) * 16;
+                            // Increment the 16-bit segment
+                            data_raw_reg[segment_idx -: 16] <= data_raw_reg[segment_idx -: 16] + 1;
+                        end
                     end
                 end
-            end
-        end else if (btnL_pressed) begin
-            for (i = 0; i < 4; i = i + 1) begin
-                for (j = 4; j < 8; j = j + 1) begin
-                    if (sw[i] && sw[j]) begin
-                        // Compute the starting bit of the 16-bit segment
-                        segment_idx = 255 - (4 * i + (j - 4)) * 16;
-                        // Decrement the 16-bit segment, ensuring no underflow
-                        if (data_raw_reg[segment_idx -: 16] > 0)
-                            data_raw_reg[segment_idx -: 16] <= data_raw_reg[segment_idx -: 16] - 1;
+            end else if (btnL_pressed) begin
+                for (i = 0; i < 4; i = i + 1) begin
+                    for (j = 4; j < 8; j = j + 1) begin
+                        if (sw[i] && sw[j]) begin
+                            // Compute the starting bit of the 16-bit segment
+                            segment_idx = 255 - (4 * i + (j - 4)) * 16;
+                            // Decrement the 16-bit segment, ensuring no underflow
+                            if (data_raw_reg[segment_idx -: 16] > 0)
+                                data_raw_reg[segment_idx -: 16] <= data_raw_reg[segment_idx -: 16] - 1;
+                        end
                     end
                 end
-            end
         end
     end
 
@@ -123,6 +135,18 @@ module top(
         .y(w_y), 
         .rgb(rgb_next), 
         .data_raw(data_raw)
+    );
+
+    // 7-Segment Display
+    timer_7seg timer(
+        .clk(clk), 
+        .btnU(btnU), 
+        .btnL(btnL), 
+        .btnR(btnR),
+        .btnC(reset),
+        .mode(mode),
+        .an(an), 
+        .seg(seg)
     );
 
 endmodule
