@@ -6,7 +6,7 @@ This project demonstrates the use of Verilog to design and implement a counter a
 
 The design leverages the Basys3’s onboard components (7-segment display and VGA output) to provide an interactive and visual representation of the counter and timer.
 
----
+
 
 ## Features 📌
 
@@ -25,7 +25,7 @@ The design leverages the Basys3’s onboard components (7-segment display and VG
    - The system can count specific periods or cycles, useful for timing intervals or event tracking.  
    - Configurable period durations to suit various applications, such as event-driven or periodic counting.  
 
----  
+  
 
 ## Hardware Requirements 🔌
 
@@ -36,7 +36,7 @@ The design leverages the Basys3’s onboard components (7-segment display and VG
 - **VGA Monitor and Cable**  
   - For visualizing the counter output.
 
----
+
 
 ## Software Requirements 💻
 
@@ -44,7 +44,7 @@ The design leverages the Basys3’s onboard components (7-segment display and VG
   - Used for writing, simulating, and implementing Verilog code.
   - Configures the Basys3 board via a USB cable.
 
----
+
 
 
 
@@ -67,7 +67,7 @@ The design leverages the Basys3’s onboard components (7-segment display and VG
 5. **Observe the Timer on SSD**  
    - The timer will display and update on the Basys3 7-segment display.
 
----
+
 
 Enjoy experimenting with FPGA-based designs on your Basys3 board! 🚀
 
