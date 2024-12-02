@@ -23,6 +23,7 @@ module top(
     wire [11:0] rgb_next;
     wire [255:0] data_raw;
     reg [255:0] data_raw_reg;
+    reg mode_reg;
 
     // Debounce signals
     wire btnR_debounced, btnL_debounced;
@@ -50,9 +51,12 @@ module top(
     reg btnR_state, btnR_pressed;
     reg btnL_state, btnL_pressed;
 
-    always @(posedge clk or posedge reset or negedge mode) begin
+    always @( mode ) begin
+        mode_reg = mode;
+    end
 
-        if (mode == 0) begin
+    always @(posedge clk or posedge reset) begin
+        if (mode_reg == 0) begin
             btnR_state <= 0;
             btnR_pressed <= 0;
 
@@ -78,7 +82,7 @@ module top(
     // Update data_raw_reg when btnR is pressed
     integer i, j, segment_idx;
     always @(posedge clk or posedge reset) begin
-            if (reset) begin
+            if (reset && mode_reg) begin
                 data_raw_reg <= 256'd0; // Clear all 16-bit segments
             end else if (btnR_pressed) begin
                 for (i = 0; i < 4; i = i + 1) begin
