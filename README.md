@@ -70,3 +70,13 @@ The design leverages the Basys3’s onboard components (7-segment display and VG
 ---
 
 Enjoy experimenting with FPGA-based designs on your Basys3 board! 🚀
+
+## 🫱🏻‍🫲🏻 Contributors  
+
+- **Peerawish Channukool**  
+- **Wasawat Podjanasatja**  
+- **Kamil Pattanasakulloy**  
+- **Veerathach Rattanarojt**  
+- **Punnawat Mungkalarungsi**  
+
+Thank you for your efforts and collaboration in bringing this project to life! 😊
