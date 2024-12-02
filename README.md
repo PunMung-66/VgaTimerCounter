@@ -73,7 +73,7 @@ Enjoy experimenting with FPGA-based designs on your Basys3 board! 🚀
 
 ## 🫱🏻‍🫲🏻 Contributors  
 
-- **Peerawish Channukool**  
+- **Peerawish Channukool** : https://github.com/SuperSonicBoomEX 
 - **Wasawat Podjanasatja**  
 - **Kamil Pattanasakulloy**  
 - **Veerathach Rattanarojt**  
